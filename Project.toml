@@ -1,0 +1,9 @@
+name = "TKMPMeasures"
+uuid = "c600416e-7491-4ac5-bc81-233e31189d52"
+authors = ["tomas votroubek <tomas.votroubek@outlook.com>"]
+version = "0.1.0"
+
+[deps]
+JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
+MultivariatePolynomials = "102ac46a-7ee4-5c85-9060-abc95bfdeaa3"
+SemialgebraicSets = "8e049039-38e8-557d-ae3a-bc521ccf6204"
