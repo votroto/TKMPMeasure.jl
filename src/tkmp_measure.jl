@@ -1,5 +1,6 @@
 using MultivariatePolynomials
 using MultivariateMoments
+using HomotopyContinuation
 using SemialgebraicSets
 using LinearAlgebra
 using JuMP
@@ -24,6 +25,8 @@ end
 # -----------------------------------------------------------------------------
 # utils
 # -----------------------------------------------------------------------------
+
+SemialgebraicSets.inequalities(::AbstractSemialgebraicSet) = []
 
 function coeffs(p::AbstractPolynomialLike, vars)
 	deg = maxdegree(p)
@@ -57,7 +60,7 @@ function localizing_matrix(m::TKMPMeasure, g::AbstractPolynomialLike)
 	round_up_even(x) = cld(x,2)*2
 
 	tg = round_up_even(maxdegree(g))
-	xd = monomials(m.vars, 0:(m.maxdegree ÷ 2 - maxdegree(g) ÷ 2)) |> reverse
+	xd = monomials(m.vars, 0:(m.maxdegree ÷ 2 - tg ÷ 2)) |> reverse
 	Ld = xd * xd' * g
 	integrate.(Ld, Ref(m))
 end
@@ -68,6 +71,7 @@ function JuMP.value(m::TKMPMeasure)
 	b = monomials(m.vars, 0:m.maxdegree ÷ 2) |> reverse
 	m = polyeval.(_moment_matrix(m))
 
+#	solver = SemialgebraicSetsHCSolver(; compile = false)
 	extractatoms(MomentMatrix(m, b), 1e-3)
 end
 
@@ -86,7 +90,8 @@ function JuMP.add_variable(model::JuMP.Model, b::TKMPMeasureBuilder, name::Strin
 	μ = TKMPMeasure(var_map, b.vars, b.maxdegree)
 
 	@constraint(model, _moment_matrix(μ) in PSDCone(), base_name=string(name," moment matrix"))
-	@constraint(model, [i in inequalities(b.on)], localizing_matrix(μ, i) in PSDCone(), base_name=string(name," localizing matrix"))
+	@constraint(model, [i in inequalities(b.on)], localizing_matrix(μ, i) in PSDCone(), base_name=string(name," localizing matrix inequalities"))
+	@constraint(model, [i in equalities(b.on)], localizing_matrix(μ, i) .== 0, base_name=string(name," localizing matrix equalities"))
 
 	μ
 end

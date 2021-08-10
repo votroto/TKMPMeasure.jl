@@ -1,7 +1,7 @@
 name = "TKMPMeasures"
 uuid = "c600416e-7491-4ac5-bc81-233e31189d52"
 authors = ["tomas votroubek <tomas.votroubek@outlook.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
