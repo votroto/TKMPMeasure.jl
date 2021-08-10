@@ -1,6 +1,5 @@
 using MultivariatePolynomials
 using MultivariateMoments
-using HomotopyContinuation
 using SemialgebraicSets
 using LinearAlgebra
 using JuMP
@@ -71,7 +70,6 @@ function JuMP.value(m::TKMPMeasure)
 	b = monomials(m.vars, 0:m.maxdegree ÷ 2) |> reverse
 	m = polyeval.(_moment_matrix(m))
 
-#	solver = SemialgebraicSetsHCSolver(; compile = false)
 	extractatoms(MomentMatrix(m, b), 1e-3)
 end
 
