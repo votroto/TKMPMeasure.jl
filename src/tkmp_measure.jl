@@ -67,13 +67,12 @@ end
 
 function JuMP.value(m::TKMPMeasure)
 	polyeval(p::AbstractPolynomialLike) = value(p)((variables(p) .=> 1)...)
-
-	solver = SemialgebraicSetsHCSolver(; excess_residual_tol = tol, real_tol = tol, compile = false)
 	b = monomials(m.vars, 0:m.maxdegree ÷ 2) |> reverse
 
-	tol = 1e-3
+	tol = 1e-3 
 	res = nothing
 	while isnothing(res) && tol <= 1e-1
+		solver = SemialgebraicSetsHCSolver(; excess_residual_tol = tol, real_tol = tol, compile = false)
 		ma = polyeval.(_moment_matrix(m))
 
 		res = extractatoms(MomentMatrix(ma, b), tol, solver)
